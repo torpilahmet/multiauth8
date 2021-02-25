@@ -20,6 +20,8 @@
     <!-- <link rel="stylesheet" href="assets/plugins/chartjs-bar-chart/chart.css"> -->
     <!--Custom CSS-->
     <link rel="stylesheet" href="{{ asset('userbackend/panel/assets/css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" />
+
 </head>
 <body id="page-top">
 <!-- preloader -->
@@ -253,12 +255,12 @@
             <li><a data-toggle="dropdown" href="#"><i class="far fa-user"></i></a>
                 <div class="user_item dropdown-menu dropdown-menu-right">
                     <div class="admin">
-                        <a href="#" class="user_link"><img src="{{ asset('userbackend/panel/assets/images/admin.jpg') }}" alt=""></a>
+                        <a href="#" class="user_link"><img src="{{ Storage::url(Auth::user()->profile_photo_path) }}" alt=""></a>
                     </div>
                     <ul>
 
-                        <li><a href="#"><span><i class="fas fa-user"></i></span> User Profile</a></li>
-                        <li><a href=" "><span><i class="fas fa-cogs"></i></span>  Password Change</a></li>
+                        <li><a href="{{ route('user.profile') }}"><span><i class="fas fa-user"></i></span> User Profile</a></li>
+                        <li><a href="{{ route('user.password.edit') }}"><span><i class="fas fa-cogs"></i></span>  Password Change</a></li>
                         <li>
 
                             <a href="{{ route('user.logout') }}"><span><i class="fas fa-unlock-alt"></i></span> Logout</a></li>
@@ -416,5 +418,45 @@
 <script src="{{ asset('userbackend/panel/assets/plugins/pie_chart/pie.active.js') }}"></script>
 <!-- Main js -->
 <script src="{{ asset('userbackend/panel/assets/js/main.js') }}"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous"></script>
+
+@yield('script')
+<script>
+    @if(Session::has('message'))
+        toastr.options = {
+        "closeButton": true,
+        "debug": true,
+        "newestOnTop": true,
+        "progressBar": true,
+        "positionClass": "toast-bottom-full-width",
+        "preventDuplicates": true,
+        "onclick": null,
+        "showDuration": "600",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+    var type = "{{ Session::get('alert-type', 'info') }}"
+    switch (type){
+        case ('info'):
+            toastr.info("{{ Session::get('message') }}");
+            break;
+        case ('success'):
+            toastr.success("{{ Session::get('message') }}");
+            break;
+        case ('warning'):
+            toastr.warning("{{ Session::get('message') }}");
+            break;
+        case ('error'):
+            toastr.error("{{ Session::get('message') }}");
+            break;
+    }
+    @endif
+</script>
 </body>
 </html>

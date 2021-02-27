@@ -1,42 +1,36 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Admin\Admin;
 use Auth;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
-class MainUserController extends Controller
+class MainAdminController extends Controller
 {
-    public function logout()
+    public function AdminProfile()
     {
-        Auth::logout();
-        return redirect()->route('login');
+        $id = Auth::guard('admin')->user()->id;
+        $adminData = Admin::find($id);
+
+        return view('admin.profile.view_profile', compact('adminData'));
     }
 
-    public function UserProfile()
+    public function AdminProfileEdit()
     {
-        $id = Auth::guard('web')->user()->id;
-        $user = User::find($id);
+        $id = Auth::guard('admin')->user()->id;
+        $editData = Admin::find($id);
 
-        return view('user.profile.view_profile', compact('user'));
+        return view('admin.profile.view_profile_edit', compact('editData'));
     }
 
-    public function UserProfileEdit()
+    public function AdminProfileStore(Request $request)
     {
-        $id = Auth::guard('web')->user()->id;
-        $editData = User::find($id);
-
-        return view('user.profile.view_profile_edit', compact('editData'));
-    }
-
-    public function UserProfileStore(Request $request)
-    {
-        $data = User::find(Auth::guard('web')->user()->id);
+        $data = Admin::find(Auth::guard('admin')->user()->id);
 
         $data->name = $request->name;
         $data->email = $request->email;
@@ -52,34 +46,34 @@ class MainUserController extends Controller
         }
         $data->save();
         $notification = array(
-            'message' => 'User Profile Updated Successfully',
+            'message' => 'Admin Profile Updated Successfully',
             'alert-type' => 'success',
         );
-        return redirect()->route('user.profile')->with($notification);
+        return redirect()->route('admin.profile')->with($notification);
     }
 
-    public function UserPasswordView()
+    public function AdminPasswordView()
     {
-        $id = Auth::guard('web')->user()->id;
-        $editData = User::find($id);
-        return view('user.password.edit_password', compact('editData'));
+        $id = Auth::guard('admin')->user()->id;
+        $editData = Admin::find($id);
+        return view('admin.password.edit_password', compact('editData'));
     }
 
-    public function UserPasswordUpdate(Request $request)
+    public function AdminPasswordUpdate(Request $request)
     {
         $validateData = $request->validate([
             'oldpassword' => 'required',
             'password' => 'required|confirmed',
         ]);
 
-        $hassedPassword = Auth::user()->password;
+        $hassedPassword = Auth::guard('admin')->user()->password;
         if(Hash::check($request->oldpassword, $hassedPassword))
         {
-            $user = User::find(Auth::id());
+            $user = Admin::find(Auth::id());
             $user->password = Hash::make($request->password);
             $user->save();
-            Auth::guard('web')->logout();
-            return redirect()->route('login');
+            Auth::guard('admin')->logout();
+            return redirect()->route('admin.login');
         } else {
             return redirect()->back();
         }

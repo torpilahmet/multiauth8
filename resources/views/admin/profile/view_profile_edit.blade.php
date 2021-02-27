@@ -1,12 +1,11 @@
-@extends('user.layouts.user_master')
+@extends('admin.layouts.admin_master')
 
 @section('content')
-    <div class="content_wrapper">
-        <!--middle content wrapper-->
-        <div class="middle_content_wrapper">
+    <div class="sl-pagebody">
+        <div class="sl-page-title">
             <div class="row">
                 <div class="col-md-6">
-                    <form method="post" action="{{ route('user.profile.store') }}" enctype="multipart/form-data">
+                    <form method="post" action="{{ route('admin.profile.store') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <label for="name" class="form-label">User Name</label>
@@ -21,7 +20,7 @@
                             <input class="form-control" type="file" id="image" name="profile_photo_path">
                         </div>
                         <div class="mb-3">
-                            <img id="showImage" src="{{ !empty($editData->profile_photo_path) ? Storage::url($editData->profile_photo_path) : asset('uploads/images/no_image.jpg') }}" class="img img-thumbnail" width="200" alt="{{ $editData->name }}">
+                            <img id="showImage" src="{{ !empty($editData->profile_photo_path) ? Storage::url($editData->profile_photo_path) : asset('uploads/images/no_image.jpg') }}" class="img img-thumbnail" width="200" alt="{{ $editData->profile_photo_path }}">
                         </div>
 
                         <button type="submit" class="btn btn-primary">Update</button>
